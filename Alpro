@@ -1,0 +1,204 @@
+package main
+
+import "fmt"
+
+type Karyawan struct {
+	Nama    string
+	Jabatan string
+}
+
+type Proyek struct {
+	Nama       string
+	Deskripsi  string
+	AnggotaTim string
+}
+
+type LaporanKeuangan struct {
+	Pemasukan   float64
+	Pengeluaran float64
+	Saldo       float64
+}
+
+var (
+	karyawans [100]Karyawan
+	jumlahKaryawan int
+
+	proyeks [100]Proyek
+	jumlahProyek int
+
+	laporans [100]LaporanKeuangan
+	jumlahLaporan int
+)
+
+func main() {
+	var pilih int
+	for {
+		fmt.Println("\nMenu Utama")
+		fmt.Println("1. Manajemen Karyawan")
+		fmt.Println("2. Manajemen Proyek")
+		fmt.Println("3. Laporan Keuangan")
+		fmt.Println("4. Keluar")
+		fmt.Print("Pilih menu (1-4): ")
+		fmt.Scanln(&pilih)
+		switch pilih {
+		case 1:
+			menuKaryawan()
+		case 2:
+			menuProyek()
+		case 3:
+			menuKeuangan()
+		case 4:
+			fmt.Println("Keluar dari aplikasi.")
+			return
+		default:
+			fmt.Println("Pilihan tidak valid.")
+		}
+	}
+}
+
+func menuKaryawan() {
+	var pilih int
+	for {
+		fmt.Println("\nManajemen Karyawan")
+		fmt.Println("1. Tambah Karyawan")
+		fmt.Println("2. Lihat Daftar Karyawan")
+		fmt.Println("3. Hapus Karyawan")
+		fmt.Println("4. Cari Karyawan ") /*pake linear search*/
+		fmt.Println("5. Urutkan Karyawan ") /*selection short*/
+		fmt.Println("6. Kembali ke Menu Utama")
+		fmt.Print("Pilih opsi: ")
+		fmt.Scanln(&pilih)
+		switch pilih {
+		case 1:
+			var nama, jabatan string
+			fmt.Print("Nama: ")
+			fmt.Scanln(&nama)
+			fmt.Print("Jabatan: ")
+			fmt.Scanln(&jabatan)
+			karyawans[jumlahKaryawan] = Karyawan{nama, jabatan}
+			jumlahKaryawan++
+		case 2:
+			fmt.Println("Daftar Karyawan:")
+			for i := 0; i < jumlahKaryawan; i++ {
+				fmt.Printf("%d. %s - %s\n", i+1, karyawans[i].Nama, karyawans[i].Jabatan)
+			}
+		case 3:
+			var nama string
+			fmt.Print("Nama karyawan yang dihapus: ")
+			fmt.Scanln(&nama)
+			for i := 0; i < jumlahKaryawan; i++ {
+				if karyawans[i].Nama == nama {
+					for j := i; j < jumlahKaryawan-1; j++ {
+						karyawans[j] = karyawans[j+1]
+					}
+					jumlahKaryawan= jumlahKaryawan - 1
+					fmt.Println("Karyawan dihapus.")
+					break
+				}
+			}
+		case 4:
+			var nama string
+			fmt.Print("Masukkan nama yang dicari: ")
+			fmt.Scanln(&nama)
+			index := linearSearchKaryawan(nama)
+			if index != -1 {
+				fmt.Printf("Ditemukan: %s - %s\n", karyawans[index].Nama, karyawans[index].Jabatan)
+			} else {
+				fmt.Println("Karyawan tidak ditemukan.")
+			}
+		case 5:
+			selectionSortKaryawan()
+			fmt.Println("Karyawan berhasil diurutkan berdasarkan nama.")
+		case 6:
+			return
+		default:
+			fmt.Println("Pilihan tidak valid.")
+		}
+	}
+}
+
+func linearSearchKaryawan(nama string) int {
+	for i := 0; i < jumlahKaryawan; i++ {
+		if karyawans[i].Nama == nama {
+			return i
+		}
+	}
+	return -1
+}
+
+func selectionSortKaryawan() {
+	for i := 0; i < jumlahKaryawan-1; i++ {
+		minIdx := i
+		for j := i + 1; j < jumlahKaryawan; j++ {
+			if karyawans[j].Nama < karyawans[minIdx].Nama {
+				minIdx = j
+			}
+		}
+		karyawans[i], karyawans[minIdx] = karyawans[minIdx], karyawans[i]
+	}
+}
+
+func menuProyek() {
+	var pilih int
+	for {
+		fmt.Println("\nManajemen Proyek")
+		fmt.Println("1. Tambah Proyek")
+		fmt.Println("2. Lihat Daftar Proyek")
+		fmt.Println("3. Kembali ke Menu Utama")
+		fmt.Print("Pilih opsi: ")
+		fmt.Scanln(&pilih)
+		switch pilih {
+		case 1:
+			var nama, deskripsi, tim string
+			fmt.Print("Nama Proyek: ")
+			fmt.Scanln(&nama)
+			fmt.Print("Deskripsi: ")
+			fmt.Scanln(&deskripsi)
+			fmt.Print("Anggota Tim: ")
+			fmt.Scanln(&tim)
+			proyeks[jumlahProyek] = Proyek{nama, deskripsi, tim}
+			jumlahProyek++
+		case 2:
+			fmt.Println("Daftar Proyek:")
+			for i := 0; i < jumlahProyek; i++ {
+				fmt.Printf("%d. %s - %s\nAnggota: %s\n", i+1, proyeks[i].Nama, proyeks[i].Deskripsi, proyeks[i].AnggotaTim)
+			}
+		case 3:
+			return
+		default:
+			fmt.Println("Pilihan tidak valid.")
+		}
+	}
+}
+
+func menuKeuangan() {
+	var pilih int
+	for {
+		fmt.Println("\nLaporan Keuangan")
+		fmt.Println("1. Tambah Laporan")
+		fmt.Println("2. Lihat Laporan")
+		fmt.Println("3. Kembali ke Menu Utama")
+		fmt.Print("Pilih opsi: ")
+		fmt.Scanln(&pilih)
+		switch pilih {
+		case 1:
+			var pemasukan, pengeluaran float64
+			fmt.Print("Pemasukan: ")
+			fmt.Scanln(&pemasukan)
+			fmt.Print("Pengeluaran: ")
+			fmt.Scanln(&pengeluaran)
+			saldo := pemasukan - pengeluaran
+			laporans[jumlahLaporan] = LaporanKeuangan{pemasukan, pengeluaran, saldo}
+			jumlahLaporan++
+		case 2:
+			fmt.Println("Laporan Keuangan:")
+			for i := 0; i < jumlahLaporan; i++ {
+				fmt.Printf("%d. Pemasukan: %.2f, Pengeluaran: %.2f, Saldo: %.2f\n", i+1, laporans[i].Pemasukan, laporans[i].Pengeluaran, laporans[i].Saldo)
+			}
+		case 3:
+			return
+		default:
+			fmt.Println("Pilihan tidak valid.")
+		}
+	}
+}
